@@ -14,6 +14,8 @@
 #if LV_EX_MOUSEWHEEL
 #include "lv_drivers/indev/mousewheel.h"
 #endif
+#include "lv_drivers/indev/evdev.h"
+
 
 #if LV_USE_DEMO_KEYPAD_AND_ENCODER
 
@@ -85,6 +87,14 @@ void lv_demo_keypad_encoder(void)
     lv_indev_t * kb_indev = lv_indev_drv_register(&kb_drv);
     lv_indev_set_group(kb_indev, g);
 #endif
+
+    evdev_init();
+    lv_indev_drv_t evdev_drv;
+    lv_indev_drv_init(&evdev_drv);
+    evdev_drv.type = LV_INDEV_TYPE_KEYPAD_ENCODER;
+    evdev_drv.read_cb = evdev_read;
+    lv_indev_t * evdev_indev = lv_indev_drv_register(&evdev_drv);
+    lv_indev_set_group(evdev_indev, g);
 
 #if LV_EX_MOUSEWHEEL
     lv_indev_drv_t enc_drv;
@@ -271,7 +281,7 @@ static void ta_event_cb(lv_obj_t * ta, lv_event_t e)
         }
     }
     else if(e == LV_EVENT_DEFOCUSED) {
-        if(indev_type == LV_INDEV_TYPE_ENCODER) {
+        if(indev_type == LV_INDEV_TYPE_ENCODER || indev_type == LV_INDEV_TYPE_KEYPAD_ENCODER) {
             if(textinput_objs.kb == NULL) {
                 lv_textarea_set_cursor_hidden(ta, true);
             }

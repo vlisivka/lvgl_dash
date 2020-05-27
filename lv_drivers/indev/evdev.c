@@ -172,6 +172,28 @@ bool evdev_read(lv_indev_drv_t * drv, lv_indev_data_t * data)
 		evdev_key_val = data->key;
 		evdev_button = data->state;
 		return false;
+	    } else if(drv->type == LV_INDEV_TYPE_KEYPAD_ENCODER) {
+		data->state = (in.value) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
+		switch(in.code) {
+			case KEY_ESC:
+				data->key = LV_KEY_ESC;
+				break;
+			case KEY_ENTER:
+				data->key = LV_KEY_ENTER;
+				break;
+			case KEY_UP:
+				data->key = LV_KEY_PREV;
+				break;
+			case KEY_DOWN:
+				data->key = LV_KEY_NEXT;
+				break;
+			default:
+				data->key = 0;
+				break;
+		}
+		evdev_key_val = data->key;
+		evdev_button = data->state;
+		return false;
 	    }
         }
     }

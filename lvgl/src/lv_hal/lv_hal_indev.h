@@ -43,6 +43,7 @@ enum {
     LV_INDEV_TYPE_BUTTON,  /**< External (hardware button) which is assigned to a specific point of the
                               screen*/
     LV_INDEV_TYPE_ENCODER, /**< Encoder with only Left, Right turn and a Button*/
+    LV_INDEV_TYPE_KEYPAD_ENCODER,  /**< Keypad with only Up, Down, Enter, and Escape*/
 };
 typedef uint8_t lv_indev_type_t;
 

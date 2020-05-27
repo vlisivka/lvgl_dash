@@ -26,7 +26,7 @@ extern "C" {
 #undef __LV_TO_STR_AUX
 #undef __LV_TO_STR
 #elif defined(LV_EX_CONF_INCLUDE_SIMPLE)
-#include "lv_ex_conf.h"
+#include "../lv_ex_conf.h"
 #else
 #include "../lv_ex_conf.h"
 #endif

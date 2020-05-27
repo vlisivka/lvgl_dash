@@ -38,14 +38,18 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 
-enum {
+enum lv_dropdown_dir_t_enum {
     LV_DROPDOWN_DIR_DOWN,
     LV_DROPDOWN_DIR_UP,
     LV_DROPDOWN_DIR_LEFT,
     LV_DROPDOWN_DIR_RIGHT,
 };
-
 typedef uint8_t lv_dropdown_dir_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_dropdown_dir_t to_lv_dropdown_dir_t(enum lv_dropdown_dir_t_enum value) {
+  return (lv_dropdown_dir_t)value;
+}
 
 /*Data of drop down list*/
 typedef struct {
@@ -67,13 +71,18 @@ typedef struct {
     uint8_t static_txt : 1;
 } lv_dropdown_ext_t;
 
-enum {
+enum lv_dropdown_part_t_enum {
     LV_DROPDOWN_PART_MAIN = LV_OBJ_PART_MAIN,
     LV_DROPDOWN_PART_LIST = _LV_OBJ_PART_REAL_LAST,
     LV_DROPDOWN_PART_SCROLLBAR,
     LV_DROPDOWN_PART_SELECTED,
 };
 typedef uint8_t lv_dropdown_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_dropdown_part_t to_lv_dropdown_part_t(enum lv_dropdown_part_t_enum value) {
+  return (lv_dropdown_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

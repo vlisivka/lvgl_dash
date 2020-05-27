@@ -47,10 +47,15 @@ typedef struct {
 } lv_img_ext_t;
 
 /*Image parts*/
-enum {
+enum lv_img_part_t_enum {
     LV_IMG_PART_MAIN,
 };
 typedef uint8_t lv_img_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_img_part_t to_lv_img_part_t(enum lv_img_part_t_enum value) {
+  return (lv_img_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

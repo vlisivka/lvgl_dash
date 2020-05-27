@@ -43,14 +43,18 @@ typedef struct {
 /**
  * Switch parts.
  */
-enum {
+enum lv_switch_part_t_enum {
     LV_SWITCH_PART_BG = LV_BAR_PART_BG,                 /**< Switch background. */
     LV_SWITCH_PART_INDIC = LV_BAR_PART_INDIC,           /**< Switch fill area. */
     LV_SWITCH_PART_KNOB = _LV_BAR_PART_VIRTUAL_LAST,    /**< Switch knob. */
     _LV_SWITCH_PART_VIRTUAL_LAST
 };
-
 typedef uint8_t lv_switch_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_switch_part_t to_lv_switch_part_t(enum lv_switch_part_t_enum value) {
+  return (lv_switch_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

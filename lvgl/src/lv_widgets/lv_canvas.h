@@ -36,10 +36,15 @@ typedef struct {
 } lv_canvas_ext_t;
 
 /*Canvas part*/
-enum {
+enum lv_canvas_part_t_enum {
     LV_CANVAS_PART_MAIN,
 };
 typedef uint8_t lv_canvas_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_canvas_part_t to_lv_canvas_part_t(enum lv_canvas_part_t_enum value) {
+  return (lv_canvas_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

@@ -37,10 +37,15 @@ typedef struct {
 } lv_line_ext_t;
 
 /*Styles*/
-enum {
+enum lv_line_style_t_enum {
     LV_LINE_PART_MAIN,
 };
 typedef uint8_t lv_line_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_line_style_t to_lv_line_style_t(enum lv_line_style_t_enum value) {
+  return (lv_line_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

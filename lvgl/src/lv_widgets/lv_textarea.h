@@ -76,7 +76,7 @@ typedef struct {
 } lv_textarea_ext_t;
 
 /** Possible text areas tyles. */
-enum {
+enum lv_textarea_style_t_enum {
     LV_TEXTAREA_PART_BG = LV_PAGE_PART_BG, /**< Text area background style */
     LV_TEXTAREA_PART_SCROLLBAR = LV_PAGE_PART_SCROLLBAR, /**< Scrollbar style */
     LV_TEXTAREA_PART_EDGE_FLASH = LV_PAGE_PART_EDGE_FLASH, /**< Edge flash style */
@@ -87,6 +87,11 @@ enum {
     _LV_TEXTAREA_PART_REAL_LAST = _LV_PAGE_PART_REAL_LAST,
 };
 typedef uint8_t lv_textarea_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_textarea_style_t to_lv_textarea_style_t(enum lv_textarea_style_t_enum value) {
+  return (lv_textarea_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

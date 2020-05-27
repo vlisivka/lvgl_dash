@@ -40,11 +40,16 @@ typedef struct {
 } lv_templ_ext_t;
 
 /*Styles*/
-enum {
+enum lv_templ_style_t_enum {
     LV_TEMPL_STYLE_X,
     LV_TEMPL_STYLE_Y,
 };
 typedef uint8_t lv_templ_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_templ_style_t to_lv_templ_style_t(enum lv_templ_style_t_enum value) {
+  return (lv_templ_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

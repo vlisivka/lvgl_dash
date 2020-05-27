@@ -41,10 +41,15 @@ typedef struct {
 } lv_objmask_ext_t;
 
 /*Parts of the object*/
-enum {
+enum lv_objmask_part_t_enum {
     LV_OBJMASK_PART_MAIN,
 };
 typedef uint8_t lv_objmask_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_objmask_part_t to_lv_objmask_part_t(enum lv_objmask_part_t_enum value) {
+  return (lv_objmask_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

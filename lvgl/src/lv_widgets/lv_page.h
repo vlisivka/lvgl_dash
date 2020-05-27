@@ -35,7 +35,7 @@ extern "C" {
  **********************/
 
 /** Scrollbar modes: shows when should the scrollbars be visible*/
-enum {
+enum lv_scrollbar_mode_t_enum {
     LV_SCROLLBAR_MODE_OFF    = 0x0, /**< Never show scroll bars*/
     LV_SCROLLBAR_MODE_ON     = 0x1, /**< Always show scroll bars*/
     LV_SCROLLBAR_MODE_DRAG   = 0x2, /**< Show scroll bars when page is being dragged*/
@@ -45,9 +45,19 @@ enum {
 };
 typedef uint8_t lv_scrollbar_mode_t;
 
+/** Casting function for use with Lua bindings.*/
+static inline lv_scrollbar_mode_t to_lv_scrollbar_mode_t(enum lv_scrollbar_mode_t_enum value) {
+  return (lv_scrollbar_mode_t)value;
+}
+
 /** Edges: describes the four edges of the page*/
-enum { LV_PAGE_EDGE_LEFT = 0x1, LV_PAGE_EDGE_TOP = 0x2, LV_PAGE_EDGE_RIGHT = 0x4, LV_PAGE_EDGE_BOTTOM = 0x8 };
+enum lv_page_edge_t_enum { LV_PAGE_EDGE_LEFT = 0x1, LV_PAGE_EDGE_TOP = 0x2, LV_PAGE_EDGE_RIGHT = 0x4, LV_PAGE_EDGE_BOTTOM = 0x8 };
 typedef uint8_t lv_page_edge_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_page_edge_t to_lv_page_edge_t(enum lv_page_edge_t_enum value) {
+  return (lv_page_edge_t)value;
+}
 
 /*Data of page*/
 typedef struct {
@@ -83,7 +93,7 @@ typedef struct {
     uint8_t scroll_prop : 1;   /*The direction of the scroll propagation*/
 } lv_page_ext_t;
 
-enum {
+enum lv_part_style_t_enum {
     LV_PAGE_PART_BG = LV_CONT_PART_MAIN,
     LV_PAGE_PART_SCROLLBAR = _LV_OBJ_PART_VIRTUAL_LAST,
     LV_PAGE_PART_EDGE_FLASH,
@@ -93,6 +103,11 @@ enum {
     _LV_PAGE_PART_REAL_LAST,
 };
 typedef uint8_t lv_part_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_part_style_t to_lv_part_style_t(enum lv_part_style_t_enum value) {
+  return (lv_part_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

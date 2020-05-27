@@ -53,7 +53,7 @@ typedef struct {
 } lv_gauge_ext_t;
 
 /*Styles*/
-enum {
+enum lv_gauge_style_t_enum {
     LV_GAUGE_PART_MAIN = LV_LINEMETER_PART_MAIN,
     LV_GAUGE_PART_MAJOR = _LV_LINEMETER_PART_VIRTUAL_LAST,
     LV_GAUGE_PART_NEEDLE,
@@ -61,6 +61,11 @@ enum {
     _LV_GAUGE_PART_REAL_LAST = _LV_LINEMETER_PART_REAL_LAST,
 };
 typedef uint8_t lv_gauge_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_gauge_style_t to_lv_gauge_style_t(enum lv_gauge_style_t_enum value) {
+  return (lv_gauge_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

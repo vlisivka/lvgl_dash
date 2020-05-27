@@ -35,12 +35,16 @@ extern "C" {
  **********************/
 
 /** Roller mode. */
-enum {
+enum lv_roller_mode_t_enum {
     LV_ROLLER_MODE_NORMAL, /**< Normal mode (roller ends at the end of the options). */
     LV_ROLLER_MODE_INIFINITE, /**< Infinite mode (roller can be scrolled forever). */
 };
-
 typedef uint8_t lv_roller_mode_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_roller_mode_t to_lv_roller_mode_t(enum lv_roller_mode_t_enum value) {
+  return (lv_roller_mode_t)value;
+}
 
 
 
@@ -57,12 +61,17 @@ typedef struct {
     uint8_t auto_fit : 1;         /*1: Automatically set the width*/
 } lv_roller_ext_t;
 
-enum {
+enum lv_roller_part_t_enum {
     LV_ROLLER_PART_BG = LV_PAGE_PART_BG,
     LV_ROLLER_PART_SELECTED = _LV_PAGE_PART_VIRTUAL_LAST,
     _LV_ROLLER_PART_VIRTUAL_LAST,
 };
 typedef uint8_t lv_roller_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_roller_part_t to_lv_roller_part_t(enum lv_roller_part_t_enum value) {
+  return (lv_roller_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

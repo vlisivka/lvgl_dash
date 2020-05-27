@@ -55,7 +55,7 @@ typedef struct {
 } lv_list_ext_t;
 
 /** List styles. */
-enum {
+enum lv_list_style_t_enum {
     LV_LIST_PART_BG = LV_PAGE_PART_BG, /**< List background style */
     LV_LIST_PART_SCROLLBAR = LV_PAGE_PART_SCROLLBAR, /**< List scrollbar style. */
     LV_LIST_PART_EDGE_FLASH = LV_PAGE_PART_EDGE_FLASH, /**< List edge flash style. */
@@ -64,6 +64,11 @@ enum {
     _LV_LIST_PART_REAL_LAST = _LV_PAGE_PART_REAL_LAST,
 };
 typedef uint8_t lv_list_style_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_list_style_t to_lv_list_style_t(enum lv_list_style_t_enum value) {
+  return (lv_list_style_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

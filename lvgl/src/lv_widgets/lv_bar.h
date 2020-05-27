@@ -43,12 +43,17 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 
-enum {
+enum lv_bar_type_t_enum {
     LV_BAR_TYPE_NORMAL,
     LV_BAR_TYPE_SYMMETRICAL,
     LV_BAR_TYPE_CUSTOM
 };
 typedef uint8_t lv_bar_type_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_bar_type_t to_lv_bar_type_t(enum lv_bar_type_t_enum value) {
+  return (lv_bar_type_t)value;
+}
 
 #if LV_USE_ANIMATION
 typedef struct {
@@ -79,12 +84,17 @@ typedef struct {
 } lv_bar_ext_t;
 
 /** Bar parts */
-enum {
+enum lv_bar_part_t_enum {
     LV_BAR_PART_BG, /** Bar background style. */
     LV_BAR_PART_INDIC, /** Bar fill area style. */
     _LV_BAR_PART_VIRTUAL_LAST
 };
 typedef uint8_t lv_bar_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_bar_part_t to_lv_bar_part_t(enum lv_bar_part_t_enum value) {
+  return (lv_bar_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

@@ -57,13 +57,18 @@ typedef struct {
 } lv_calendar_ext_t;
 
 /** Calendar parts*/
-enum {
+enum lv_calendar_part_t_enum {
     LV_CALENDAR_PART_BG, /**< Background and "normal" date numbers style */
     LV_CALENDAR_PART_HEADER, /** Calendar header style */
     LV_CALENDAR_PART_DAY_NAMES, /** Day name style */
     LV_CALENDAR_PART_DATE, /** Day name style */
 };
 typedef uint8_t lv_calendar_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_calendar_part_t to_lv_calendar_part_t(enum lv_calendar_part_t_enum value) {
+  return (lv_calendar_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

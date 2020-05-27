@@ -35,7 +35,7 @@ extern "C" {
 
 /** Possible states of a button.
  * It can be used not only by buttons but other button-like objects too*/
-enum {
+enum lv_btn_state_t_enum {
     LV_BTN_STATE_ACTIVE,
     LV_BTN_STATE_RELEASED,
     LV_BTN_STATE_PRESSED,
@@ -45,6 +45,11 @@ enum {
     LV_BTN_STATE_DISABLED = 0x80
 };
 typedef uint8_t lv_btn_state_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_btn_state_t to_lv_btn_state_t(enum lv_btn_state_t_enum value) {
+  return (lv_btn_state_t)value;
+}
 
 /** Extended data of button*/
 typedef struct {
@@ -56,12 +61,17 @@ typedef struct {
 } lv_btn_ext_t;
 
 /**Styles*/
-enum {
+enum lv_btn_part_t_enum {
     LV_BTN_PART_MAIN = LV_OBJ_PART_MAIN,
     _LV_BTN_PART_VIRTUAL_LAST,
     _LV_BTN_PART_REAL_LAST = _LV_OBJ_PART_REAL_LAST,
 };
 typedef uint8_t lv_btn_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_btn_part_t to_lv_btn_part_t(enum lv_btn_part_t_enum value) {
+  return (lv_btn_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

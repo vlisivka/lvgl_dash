@@ -40,7 +40,7 @@ LV_EXPORT_CONST_INT(LV_LABEL_TEXT_SEL_OFF);
  **********************/
 
 /** Long mode behaviors. Used in 'lv_label_ext_t' */
-enum {
+enum lv_label_long_mode_t_enum {
     LV_LABEL_LONG_EXPAND,    /**< Expand the object size to the text size*/
     LV_LABEL_LONG_BREAK,     /**< Keep the object width, break the too long lines and expand the object
                                 height*/
@@ -51,14 +51,24 @@ enum {
 };
 typedef uint8_t lv_label_long_mode_t;
 
+/** Casting function for use with Lua bindings.*/
+static inline lv_label_long_mode_t to_lv_label_long_mode_t(enum lv_label_long_mode_t_enum value) {
+  return (lv_label_long_mode_t)value;
+}
+
 /** Label align policy*/
-enum {
+enum lv_label_align_t_enum {
     LV_LABEL_ALIGN_LEFT, /**< Align text to left */
     LV_LABEL_ALIGN_CENTER, /**< Align text to center */
     LV_LABEL_ALIGN_RIGHT, /**< Align text to right */
     LV_LABEL_ALIGN_AUTO, /**< Use LEFT or RIGHT depending on the direction of the text (LTR/RTL)*/
 };
 typedef uint8_t lv_label_align_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_label_align_t to_lv_label_align_t(enum lv_label_align_t_enum value) {
+  return (lv_label_align_t)value;
+}
 
 /** Data of label*/
 typedef struct {
@@ -99,11 +109,15 @@ typedef struct {
 } lv_label_ext_t;
 
 /** Label styles*/
-enum {
+enum lv_label_part_t_enum{
     LV_LABEL_PART_MAIN,
 };
-
 typedef uint8_t lv_label_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_label_part_t to_lv_label_part_t(enum lv_label_part_t_enum value) {
+  return (lv_label_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

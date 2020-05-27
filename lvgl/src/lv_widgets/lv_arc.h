@@ -38,7 +38,7 @@ typedef struct {
 } lv_arc_ext_t;
 
 /*Parts of the arc*/
-enum {
+enum lv_arc_part_t_enum {
     LV_ARC_PART_BG = LV_OBJ_PART_MAIN,
     LV_ARC_PART_INDIC,
     _LV_ARC_PART_VIRTUAL_LAST,
@@ -46,6 +46,11 @@ enum {
     _LV_ARC_PART_REAL_LAST = _LV_OBJ_PART_REAL_LAST,
 };
 typedef uint8_t lv_arc_part_t;
+
+/** Casting function for use with Lua bindings.*/
+static inline lv_arc_part_t to_lv_arc_part_t(enum lv_arc_part_t_enum value) {
+  return (lv_arc_part_t)value;
+}
 
 /**********************
  * GLOBAL PROTOTYPES

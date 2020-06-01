@@ -9,6 +9,7 @@ int init();
 
 lv_indev_t * init_keyboard();
 
+void store_lua_state(lua_State *L);
 lua_State* get_lua_state();
 
 void event_loop(lua_State *L);

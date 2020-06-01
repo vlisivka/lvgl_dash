@@ -24,7 +24,7 @@ static void init_lua_state_key() {
 }
 
 /** Store Lua state for later use by callbacks */
-static void store_lua_state(lua_State *L) {
+void store_lua_state(lua_State *L) {
     (void) pthread_setspecific(lua_state_key, L);
 }
 

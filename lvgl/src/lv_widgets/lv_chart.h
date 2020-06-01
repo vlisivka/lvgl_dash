@@ -38,29 +38,21 @@ LV_EXPORT_CONST_INT(LV_CHART_TICK_LENGTH_AUTO);
  **********************/
 
 /** Chart types*/
-enum lv_chart_type_t_enum {
+enum {
     LV_CHART_TYPE_NONE     = 0x00, /**< Don't draw the series*/
     LV_CHART_TYPE_LINE     = 0x01, /**< Connect the points with lines*/
     LV_CHART_TYPE_COLUMN   = 0x02, /**< Draw columns*/
 };
 typedef uint8_t lv_chart_type_t;
 
-/** Casting function for use with Lua bindings.*/
-static inline lv_chart_type_t to_lv_chart_type_t(enum lv_chart_type_t_enum value) {
-  return (lv_chart_type_t)value;
-}
 
 /** Chart update mode for `lv_chart_set_next`*/
-enum lv_chart_update_mode_t_enum {
+enum {
     LV_CHART_UPDATE_MODE_SHIFT,     /**< Shift old data to the left and add the new one o the right*/
     LV_CHART_UPDATE_MODE_CIRCULAR,  /**< Add the new data in a circular way*/
 };
 typedef uint8_t lv_chart_update_mode_t;
 
-/** Casting function for use with Lua bindings.*/
-static inline lv_chart_update_mode_t to_lv_chart_update_mode_t(enum lv_chart_update_mode_t_enum value) {
-  return (lv_chart_update_mode_t)value;
-}
 
 typedef struct {
     lv_coord_t * points;
@@ -69,17 +61,12 @@ typedef struct {
 } lv_chart_series_t;
 
 /** Data of axis */
-enum lv_chart_axis_options_t_enum {
+enum {
     LV_CHART_AXIS_SKIP_LAST_TICK = 0x00,            /**< don't draw the last tick */
     LV_CHART_AXIS_DRAW_LAST_TICK = 0x01,            /**< draw the last tick */
     LV_CHART_AXIS_INVERSE_LABELS_ORDER = 0x02       /**< draw tick labels in an inversed order*/
 };
 typedef uint8_t lv_chart_axis_options_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_chart_axis_options_t to_lv_chart_axis_options_t(enum lv_chart_axis_options_t_enum value) {
-  return (lv_chart_axis_options_t)value;
-}
 
 typedef struct {
     const char * list_of_values;

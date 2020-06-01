@@ -47,15 +47,10 @@ typedef struct {
 } lv_imgbtn_ext_t;
 
 /*Parts of the image button*/
-enum lv_imgbtn_part_t_enum {
+enum {
     LV_IMGBTN_PART_MAIN = LV_BTN_PART_MAIN,
 };
 typedef uint8_t lv_imgbtn_part_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_imgbtn_part_t to_lv_imgbtn_part_t(enum lv_imgbtn_part_t_enum value) {
-  return (lv_imgbtn_part_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

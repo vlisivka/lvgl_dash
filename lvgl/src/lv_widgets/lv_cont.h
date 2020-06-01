@@ -28,7 +28,7 @@ extern "C" {
  **********************/
 
 /** Container layout options*/
-enum lv_layout_t_enum {
+enum {
     LV_LAYOUT_OFF = 0, /**< No layout */
     LV_LAYOUT_CENTER, /**< Center objects */
 
@@ -84,28 +84,18 @@ enum lv_layout_t_enum {
 };
 typedef uint8_t lv_layout_t;
 
-/** Casting function for use with Lua bindings.*/
-static inline lv_layout_t to_lv_layout_t(enum lv_layout_t_enum value) {
-  return (lv_layout_t)value;
-}
-
 /**
  * How to resize the container around the children.
  */
-enum lv_fit_t_enum {
+enum {
     LV_FIT_NONE,  /**< Do not change the size automatically*/
     LV_FIT_TIGHT, /**< Shrink wrap around the children */
     LV_FIT_PARENT, /**< Align the size to the parent's edge*/
     LV_FIT_MAX,  /**< Align the size to the parent's edge first but if there is an object out of it
                      then get larger */
     _LV_FIT_LAST
-} lv_fit_t_enum;
+};
 typedef uint8_t lv_fit_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_fit_t to_lv_fit_t(enum lv_fit_t_enum value) {
-  return (lv_fit_t)value;
-}
 
 typedef struct {
     /*Inherited from 'base_obj' so no inherited ext. */ /*Ext. of ancestor*/

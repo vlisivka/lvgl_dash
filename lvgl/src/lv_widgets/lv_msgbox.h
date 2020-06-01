@@ -55,18 +55,13 @@ typedef struct {
 } lv_msgbox_ext_t;
 
 /** Message box styles. */
-enum lv_msgbox_style_t_enum {
+enum {
     LV_MSGBOX_PART_BG = LV_CONT_PART_MAIN,
 
     LV_MSGBOX_PART_BTN_BG = _LV_CONT_PART_REAL_LAST,
     LV_MSGBOX_PART_BTN,
 };
 typedef uint8_t lv_msgbox_style_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_msgbox_style_t to_lv_msgbox_style_t(enum lv_msgbox_style_t_enum value) {
-  return (lv_msgbox_style_t)value;
-}
 
 
 /**********************

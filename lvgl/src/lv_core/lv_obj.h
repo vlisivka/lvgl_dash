@@ -198,6 +198,9 @@ typedef struct _lv_obj_t {
     lv_event_cb_t event_cb; /**< Event callback function */
     lv_signal_cb_t signal_cb; /**< Object type specific signal function*/
     lv_design_cb_t design_cb; /**< Object type specific design function*/
+#if LV_LUA_BINDINGS == 1
+    int lua_event_cb;
+#endif
 
     void * ext_attr;            /**< Object type specific extended data*/
     lv_style_list_t  style_list;
@@ -754,6 +757,12 @@ void lv_obj_finish_transitions(lv_obj_t * obj, uint8_t part);
  * @param event_cb the new event function
  */
 void lv_obj_set_event_cb(lv_obj_t * obj, lv_event_cb_t event_cb);
+
+#if LV_LUA_BINDINGS == 1
+/** Call Lua event callback. */
+void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event);
+#endif
+
 
 /**
  * Send an event to the object

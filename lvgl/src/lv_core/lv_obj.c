@@ -27,6 +27,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#if LV_LUA_BINDINGS == 1
+#define LUA_NOREF       (-2)
+#endif
+
 #if defined(LV_GC_INCLUDE)
     #include LV_GC_INCLUDE
 #endif /* LV_ENABLE_GC */
@@ -224,6 +228,9 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
         new_obj->signal_cb = lv_obj_signal;
         new_obj->design_cb = lv_obj_design;
         new_obj->event_cb = NULL;
+#if LV_LUA_BINDINGS == 1
+        new_obj->lua_event_cb = LUA_NOREF;
+#endif
 
         /*Set coordinates to full screen size*/
         new_obj->coords.x1    = 0;
@@ -254,6 +261,9 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
         new_obj->signal_cb = lv_obj_signal;
         new_obj->design_cb = lv_obj_design;
         new_obj->event_cb = NULL;
+#if LV_LUA_BINDINGS == 1
+        new_obj->lua_event_cb = LUA_NOREF;
+#endif
 
         new_obj->coords.y1    = parent->coords.y1;
         new_obj->coords.y2    = parent->coords.y1 + LV_OBJ_DEF_HEIGHT;
@@ -352,6 +362,9 @@ lv_obj_t * lv_obj_create(lv_obj_t * parent, const lv_obj_t * copy)
         /*Only copy the `event_cb`. `signal_cb` and `design_cb` will be copied in the derived
          * object type (e.g. `lv_btn`)*/
         new_obj->event_cb = copy->event_cb;
+#if LV_LUA_BINDINGS == 1
+        new_obj->lua_event_cb = copy->lua_event_cb;
+#endif
 
         /*Copy attributes*/
         new_obj->adv_hittest  = copy->adv_hittest;
@@ -1730,6 +1743,10 @@ lv_res_t lv_event_send(lv_obj_t * obj, lv_event_t event, const void * data)
     if(obj == NULL) return LV_RES_OK;
 
     LV_ASSERT_OBJ(obj, LV_OBJX_NAME);
+
+#if LV_LUA_BINDINGS == 1
+    lv_lua_event_cb_caller(obj, event);
+#endif
 
     lv_res_t res;
     res = lv_event_send_func(obj->event_cb, obj, event, data);

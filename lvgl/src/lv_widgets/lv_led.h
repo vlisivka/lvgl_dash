@@ -35,15 +35,10 @@ typedef struct {
 } lv_led_ext_t;
 
 /*Parts of LED*/
-enum lv_led_part_t_enum {
+enum {
     LV_LED_PART_MAIN = LV_OBJ_PART_MAIN,
 };
 typedef uint8_t lv_led_part_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_led_part_t to_lv_led_part_t(enum lv_led_part_t_enum value) {
-  return (lv_led_part_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

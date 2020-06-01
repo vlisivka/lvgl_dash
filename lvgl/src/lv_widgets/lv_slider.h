@@ -33,17 +33,12 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 
-enum lv_slider_type_t_enum {
+enum {
     LV_SLIDER_TYPE_NORMAL,
     LV_SLIDER_TYPE_SYMMETRICAL,
     LV_SLIDER_TYPE_RANGE
 };
 typedef uint8_t lv_slider_type_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_slider_type_t to_lv_slider_type_t(enum lv_slider_type_t_enum value) {
-  return (lv_slider_type_t)value;
-}
 
 /*Data of slider*/
 typedef struct {

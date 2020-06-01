@@ -23,3 +23,8 @@ int main(void)
 
     return 0;
 }
+
+
+void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
+  /* Do nothing. */
+}

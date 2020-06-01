@@ -49,18 +49,13 @@ typedef struct {
 } lv_spinbox_ext_t;
 
 /*Styles*/
-enum lv_spinbox_part_t_enum {
+enum {
     LV_SPINBOX_PART_BG = LV_TEXTAREA_PART_BG,
     LV_SPINBOX_PART_CURSOR = LV_TEXTAREA_PART_CURSOR,
     _LV_SPINBOX_PART_VIRTUAL_LAST = _LV_TEXTAREA_PART_VIRTUAL_LAST,
     _LV_SPINBOX_PART_REAL_LAST = _LV_TEXTAREA_PART_REAL_LAST,
 };
 typedef uint8_t lv_spinbox_part_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_spinbox_part_t to_lv_spinbox_part_t(enum lv_spinbox_part_t_enum value) {
-  return (lv_spinbox_part_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

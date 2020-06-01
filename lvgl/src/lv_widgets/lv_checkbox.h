@@ -47,18 +47,13 @@ typedef struct {
 } lv_checkbox_ext_t;
 
 /** Checkbox styles. */
-enum lv_checkbox_style_t_enum {
+enum {
     LV_CHECKBOX_PART_BG = LV_BTN_PART_MAIN,  /**< Style of object background. */
     _LV_CHECKBOX_PART_VIRTUAL_LAST,
     LV_CHECKBOX_PART_BULLET = _LV_BTN_PART_REAL_LAST, /**< Style of box (released). */
     _LV_CHECKBOX_PART_REAL_LAST
 };
 typedef uint8_t lv_checkbox_style_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_checkbox_style_t to_lv_checkbox_style_t(enum lv_checkbox_style_t_enum value) {
-  return (lv_checkbox_style_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

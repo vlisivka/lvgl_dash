@@ -623,14 +623,12 @@ static void indev_keypad_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
 
         /*Simulate a press on the object if ENTER was pressed*/
         if(data->key == LV_KEY_ENTER) {
-            printf("ENTER\n");
             bool editable = false;
             indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_GET_EDITABLE, &editable);
-            printf("[indev] Editable? %d\n", editable);
+
             /*On Enter press enter edit mode.*/
             if(editable && lv_group_get_editing(g) == false) {
                 lv_group_set_editing(g, true); /*Enter edit mode on Enter press*/
-                printf("[indev] Entering editing mode.\n", editable);
             } else {
                 /*Send the ENTER as a normal KEY*/
                 lv_group_send_data(g, LV_KEY_ENTER);
@@ -642,14 +640,12 @@ static void indev_keypad_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
             }
         }
         else if(data->key == LV_KEY_ESC) {
-            printf("ESC\n");
             bool editable = false;
             indev_obj_act->signal_cb(indev_obj_act, LV_SIGNAL_GET_EDITABLE, &editable);
 
             /*On Esc press exit edit mode. Don't leave edit mode if there is only one object (nowhere to navigate).*/
             if(lv_group_get_editing(g) && _lv_ll_is_empty(&g->obj_ll) == false) {
                 lv_group_set_editing(g, false); /*Exit edit mode on Esc press*/
-                printf("[indev] Exiting from editing mode.\n", editable);
             } else {
                 /*Send the ESC as a normal KEY*/
                 lv_group_send_data(g, LV_KEY_ESC);
@@ -662,10 +658,8 @@ static void indev_keypad_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         else if(data->key == LV_KEY_NEXT) {
             /*In editing mode send RIGHT key*/
             if(lv_group_get_editing(g)) {
-                printf("Group sent RIGHT\n");
                 lv_group_send_data(g, LV_KEY_RIGHT);
             } else {
-                printf("Group focus NEXT\n");
                 lv_group_focus_next(g);
                 if(indev_reset_check(&i->proc)) return;
             }
@@ -674,11 +668,9 @@ static void indev_keypad_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
         else if(data->key == LV_KEY_PREV) {
             /*In editing mode send LEFT key*/
             if(lv_group_get_editing(g)) {
-                printf("Group sent LEFT\n");
                 lv_group_send_data(g, LV_KEY_LEFT);
             } else {
                 lv_group_focus_prev(g);
-                printf("Focus PREV\n");
                 if(indev_reset_check(&i->proc)) return;
             }
         }

@@ -27,29 +27,18 @@ extern "C" {
  *      TYPEDEFS
  **********************/
 
-enum lv_cpicker_type_t_enum {
+enum {
     LV_CPICKER_TYPE_RECT,
     LV_CPICKER_TYPE_DISC,
 };
 typedef uint8_t lv_cpicker_type_t;
 
-/** Casting function for use with Lua bindings.*/
-static inline lv_cpicker_type_t to_lv_cpicker_type_t(enum lv_cpicker_type_t_enum value) {
-  return (lv_cpicker_type_t)value;
-}
-
-enum lv_cpicker_color_mode_t_enum {
+enum {
     LV_CPICKER_COLOR_MODE_HUE,
     LV_CPICKER_COLOR_MODE_SATURATION,
     LV_CPICKER_COLOR_MODE_VALUE
 };
 typedef uint8_t lv_cpicker_color_mode_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_cpicker_color_mode_t to_lv_cpicker_color_mode_t(enum lv_cpicker_color_mode_t_enum value) {
-  return (lv_cpicker_color_mode_t)value;
-}
-
 
 
 /*Data of colorpicker*/

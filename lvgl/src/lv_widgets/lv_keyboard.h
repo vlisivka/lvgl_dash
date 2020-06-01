@@ -39,18 +39,13 @@ extern "C" {
  **********************/
 
 /** Current keyboard mode. */
-enum lv_keyboard_mode_t_enum {
+enum {
     LV_KEYBOARD_MODE_TEXT_LOWER,
     LV_KEYBOARD_MODE_TEXT_UPPER,
     LV_KEYBOARD_MODE_SPECIAL,
     LV_KEYBOARD_MODE_NUM,
 };
 typedef uint8_t lv_keyboard_mode_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_keyboard_mode_t to_lv_keyboard_mode_t(enum lv_keyboard_mode_t_enum value) {
-  return (lv_keyboard_mode_t)value;
-}
 
 /*Data of keyboard*/
 typedef struct {
@@ -61,16 +56,11 @@ typedef struct {
     uint8_t cursor_mng : 1; /*1: automatically show/hide cursor when a text area is assigned or left*/
 } lv_keyboard_ext_t;
 
-enum lv_keyboard_style_t_enum {
+enum {
     LV_KEYBOARD_PART_BG,
     LV_KEYBOARD_PART_BTN,
 };
 typedef uint8_t lv_keyboard_style_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_keyboard_style_t to_lv_keyboard_style_t(enum lv_keyboard_style_t_enum value) {
-  return (lv_keyboard_style_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

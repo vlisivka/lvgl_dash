@@ -1,4 +1,5 @@
 %module lvgl
+
 %{
 #include "lv_conf.h"
 #include "./lvgl/lvgl.h"
@@ -192,3 +193,45 @@
 %include "./lvgl/src/lv_misc/lv_gc.h"
 %include "init.h"
 
+%include <lua_fnptr.i>
+
+%inline {
+#include <pthread.h>
+
+/**
+ * Set a an event handler function for an object.
+ * Used by the user to react on event which happens with the object.
+ * @param obj pointer to an object
+ * @param event_cb the new event function
+ */
+void lv_obj_set_lua_event_cb(lua_State *L, lv_obj_t *obj, SWIGLUA_REF ref) {
+    if(!obj) {
+        fprintf(stderr, "\nERROR: Obj is null.\n");
+        return;
+    }
+    obj->lua_event_cb = ref.ref;
+}
+
+
+void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
+    if (obj->lua_event_cb >= 0)  {
+        lua_State *L = get_lua_state();
+    
+        lua_rawgeti(L, LUA_REGISTRYINDEX, obj->lua_event_cb);
+
+        SWIG_NewPointerObj(L, obj, SWIGTYPE_p__lv_obj_t, 0);
+        lua_pushinteger(L, event);
+
+        if (lua_pcall(L, 2, 0, 0)) {
+            fprintf(stderr, "\nERROR: Error calling callback Lua function: %s\n\n", lua_tostring(L, -1));
+            lua_pop(L, -1);
+        }
+    }
+}
+
+/** Casting function for use with Lua bindings.*/
+lv_layout_t to_lv_layout_t(int value) {
+  return (lv_layout_t)value;
+}
+
+}

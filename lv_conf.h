@@ -15,6 +15,8 @@
 
 #include <stdint.h>
 
+#define LV_LUA_BINDINGS 1
+
 /*====================
    Graphical settings
  *====================*/

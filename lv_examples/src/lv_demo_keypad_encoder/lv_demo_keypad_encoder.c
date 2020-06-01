@@ -181,9 +181,7 @@ static void msgbox_create(void)
     lv_obj_set_event_cb(mbox, msgbox_event_cb);
     lv_group_add_obj(g, mbox);
     lv_group_focus_obj(mbox);
-#if LV_EX_MOUSEWHEEL
     lv_group_set_editing(g, true);
-#endif
     lv_group_focus_freeze(g, true);
 
     static const char * btns[] = {"Ok", "Cancel", ""};

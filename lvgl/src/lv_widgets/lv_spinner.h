@@ -41,31 +41,21 @@ extern "C" {
 /**
  * Type of spinner.
  */
-enum lv_spinner_type_t_enum {
+enum {
     LV_SPINNER_TYPE_SPINNING_ARC,
     LV_SPINNER_TYPE_FILLSPIN_ARC,
     LV_SPINNER_TYPE_CONSTANT_ARC,
 };
 typedef uint8_t lv_spinner_type_t;
 
-/** Casting function for use with Lua bindings.*/
-static inline lv_spinner_type_t to_lv_spinner_type_t(enum lv_spinner_type_t_enum value) {
-  return (lv_spinner_type_t)value;
-}
-
 /**
  * Direction the spinner should spin.
  */
-enum lv_spinner_dir_t_enum {
+enum {
     LV_SPINNER_DIR_FORWARD,
     LV_SPINNER_DIR_BACKWARD,
 };
 typedef uint8_t lv_spinner_dir_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_spinner_dir_t to_lv_spinner_dir_t(enum lv_spinner_dir_t_enum value) {
-  return (lv_spinner_dir_t)value;
-}
 
 /*Data of pre loader*/
 typedef struct {
@@ -78,7 +68,7 @@ typedef struct {
 } lv_spinner_ext_t;
 
 /*Parts of the spinner*/
-enum lv_spinner_style_t_enum {
+enum {
     LV_SPINNER_PART_BG = LV_ARC_PART_BG,
     LV_SPINNER_PART_INDIC = LV_ARC_PART_INDIC,
     _LV_SPINNER_PART_VIRTUAL_LAST,
@@ -86,11 +76,6 @@ enum lv_spinner_style_t_enum {
     _LV_SPINNER_PART_REAL_LAST = _LV_ARC_PART_REAL_LAST,
 };
 typedef uint8_t lv_spinner_style_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_spinner_style_t to_lv_spinner_style_t(enum lv_spinner_style_t_enum value) {
-  return (lv_spinner_style_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

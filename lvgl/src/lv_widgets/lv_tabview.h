@@ -39,7 +39,7 @@ extern "C" {
  **********************/
 
 /** Position of tabview buttons. */
-enum lv_tabview_btns_pos_t_enum {
+enum {
     LV_TABVIEW_TAB_POS_NONE,
     LV_TABVIEW_TAB_POS_TOP,
     LV_TABVIEW_TAB_POS_BOTTOM,
@@ -47,11 +47,6 @@ enum lv_tabview_btns_pos_t_enum {
     LV_TABVIEW_TAB_POS_RIGHT
 };
 typedef uint8_t lv_tabview_btns_pos_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_tabview_btns_pos_t to_lv_tabview_btns_pos_t(enum lv_tabview_btns_pos_t_enum value) {
-  return (lv_tabview_btns_pos_t)value;
-}
 
 /*Data of tab*/
 typedef struct {
@@ -70,7 +65,7 @@ typedef struct {
     lv_tabview_btns_pos_t btns_pos : 3;
 } lv_tabview_ext_t;
 
-enum lv_tabview_part_t_enum {
+enum {
     LV_TABVIEW_PART_BG = LV_OBJ_PART_MAIN,
     _LV_TABVIEW_PART_VIRTUAL_LAST = _LV_OBJ_PART_VIRTUAL_LAST,
 
@@ -81,11 +76,6 @@ enum lv_tabview_part_t_enum {
     _LV_TABVIEW_PART_REAL_LAST,
 };
 typedef uint8_t lv_tabview_part_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_tabview_part_t to_lv_tabview_part_t(enum lv_tabview_part_t_enum value) {
-  return (lv_tabview_part_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

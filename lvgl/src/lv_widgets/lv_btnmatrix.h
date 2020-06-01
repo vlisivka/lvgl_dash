@@ -35,7 +35,7 @@ LV_EXPORT_CONST_INT(LV_BTNMATRIX_BTN_NONE);
 
 /** Type to store button control bits (disabled, hidden etc.)
  * The first 3 bits are used to store the width */
-enum lv_btnmatrix_ctrl_t_enum {
+enum {
     LV_BTNMATRIX_CTRL_HIDDEN     = 0x0008, /**< Button hidden */
     LV_BTNMATRIX_CTRL_NO_REPEAT  = 0x0010, /**< Do not repeat press this button. */
     LV_BTNMATRIX_CTRL_DISABLED   = 0x0020, /**< Disable this button. */
@@ -44,11 +44,6 @@ enum lv_btnmatrix_ctrl_t_enum {
     LV_BTNMATRIX_CTRL_CLICK_TRIG = 0x0100, /**< 1: Send LV_EVENT_SELECTED on CLICK, 0: Send LV_EVENT_SELECTED on PRESS*/
 };
 typedef uint16_t lv_btnmatrix_ctrl_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_btnmatrix_ctrl_t to_lv_btnmatrix_ctrl_t(enum lv_btnmatrix_ctrl_t_enum value) {
-  return (lv_btnmatrix_ctrl_t)value;
-}
 
 /*Data of button matrix*/
 typedef struct {
@@ -66,16 +61,11 @@ typedef struct {
     uint8_t one_check : 1;  /*Single button toggled at once*/
 } lv_btnmatrix_ext_t;
 
-enum lv_btnmatrix_part_t_enum {
+enum {
     LV_BTNMATRIX_PART_BG,
     LV_BTNMATRIX_PART_BTN,
 };
 typedef uint8_t lv_btnmatrix_part_t;
-
-/** Casting function for use with Lua bindings.*/
-static inline lv_btnmatrix_part_t to_lv_btnmatrix_part_t(enum lv_btnmatrix_part_t_enum value) {
-  return (lv_btnmatrix_part_t)value;
-}
 
 /**********************
  * GLOBAL PROTOTYPES

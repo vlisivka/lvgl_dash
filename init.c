@@ -6,11 +6,37 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
+#include <stdio.h>
 
 #define DISP_BUF_SIZE (80 * LV_HOR_RES_MAX)
 
-int init(void)
+/** Get Lua state, stored by event_loop() function. */
+static pthread_key_t lua_state_key;
+static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+
+static void make_lua_state_key() {
+    (void) pthread_key_create(&lua_state_key, NULL);
+}
+
+static void init_lua_state_key() {
+    /* Make thread-local variable to store Lua state. */
+    pthread_once(&key_once, make_lua_state_key);
+}
+
+/** Store Lua state for later use by callbacks */
+static void store_lua_state(lua_State *L) {
+    (void) pthread_setspecific(lua_state_key, L);
+}
+
+/** Get Lua state, stored by event_loop() function. */
+lua_State* get_lua_state() {
+    return pthread_getspecific(lua_state_key);
+}
+
+
+int init()
 {
+
     /*LittlevGL init*/
     lv_init();
 
@@ -31,8 +57,23 @@ int init(void)
     disp_drv.flush_cb = fbdev_flush;
     lv_disp_drv_register(&disp_drv);
 
+    /* Make thread-local variable to store Lua state. */
+    init_lua_state_key();
+
     return 0;
 }
+
+static lv_indev_drv_t evdev_drv;
+lv_indev_t * init_keyboard() {
+    evdev_init();
+    lv_indev_drv_init(&evdev_drv);
+    evdev_drv.type = LV_INDEV_TYPE_KEYPAD_ENCODER;
+    evdev_drv.read_cb = evdev_read;
+    lv_indev_t * evdev_indev = lv_indev_drv_register(&evdev_drv);
+    
+    return evdev_indev;
+}
+/*    lv_indev_set_group(evdev_indev, group); */
 
 /*Set in lv_conf.h as `LV_TICK_CUSTOM_SYS_TIME_EXPR`*/
 uint32_t custom_tick_get(void)
@@ -53,19 +94,15 @@ uint32_t custom_tick_get(void)
     return time_ms;
 }
 
-int lvmain(void)
-{
-    init();
 
-    /*Create a Demo*/
-    //lv_demo_widgets();
-    lv_demo_keypad_encoder();
+
+void event_loop(lua_State *L)
+{
+    store_lua_state(L);
 
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {
         lv_task_handler();
         usleep(5000);
     }
-
-    return 0;
 }

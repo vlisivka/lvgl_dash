@@ -139,7 +139,10 @@ void fbdev_init(void)
         perror("Error: failed to map framebuffer device to memory");
         return;
     }
-    memset(fbp, 0, screensize);
+    /*Don't clear whole screen.
+      Used part of screen will be repainted.
+      Unused part will hold image from an another program.
+    memset(fbp, 0, screensize);*/
 
     printf("The framebuffer device was mapped to memory successfully.\n");
 

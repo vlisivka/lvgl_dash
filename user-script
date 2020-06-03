@@ -1,0 +1,68 @@
+#!/bin/bash
+set -ue -o pipefail # Unofficial strict mode.
+
+APP="logs.lua"
+DRIVER="/sys/class/graphics/fb0"
+APP_TTY=6
+SBENGINE_TTY=7
+
+DIRECTION="${1:?ERROR: Argument is required: \"up\" or \"down\".}"
+
+echo "[user-script]: INFO: Direction: $DIRECTION"
+
+case "$DIRECTION" in
+up)
+  # Switch to alternative screen and launch app, if necessary.
+
+  # Change virtual terminal, so app will receive keyboard input
+  chvt "$APP_TTY" </dev/tty0
+
+  # Check is add already running.
+  if pidof "$APP" >/dev/null
+  then
+    echo "[user-script] DEBUG: Switching to alternative screen."
+
+    # Just switch to alternative screen
+    #echo '0,320' > "$DRIVER/pan"
+    # Switch slowly
+    for((I=0;I<=320;I++)); do echo "0,$I" >"$DRIVER/pan"; done
+
+  else
+    echo "[user-script] DEBUG: Launching $APP at alternative screen."
+
+    # Extend framebuffer
+    echo "240,640" > "$DRIVER/virtual_size"
+
+    # Switch to alternative screen
+    #echo '0,320' >$DRIVER/pan
+    # Switch slowly
+    for((I=0;I<=320;I++)); do echo "0,$I" >"$DRIVER/pan"; done
+
+    # Launch app at background
+    HOME="/home/root" $APP < "/dev/tty$APP_TTY" >/var/log/"$APP.log" 2>&1 &
+
+  fi
+;;
+
+down)
+  echo "[user-script] DEBUG: Switching to main screen."
+
+  # Switch back to main screen
+  echo '0,0' >$DRIVER/pan
+  # Switch slowly
+  for((I=320;I>=0;I--)); do echo "0,$I" >"$DRIVER/pan"; done
+
+  # Change virtual terminal, so app will NOT receive keyboard input
+  chvt $SBENGINE_TTY
+  
+  # Kill the app
+  killall "$APP"
+
+;;
+
+*)
+  echo "[user-script] ERROR: Unknown command \"$DIRECTION\". Expected \"up\" or \"down\"." >&2
+  exit 1
+;;
+esac
+

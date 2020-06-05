@@ -61,7 +61,7 @@ lvgl.so: lvgl_wrap.o init.o $(OBJS)
 .PHONY: up
 up: lvgl.so
 	scp lvgl.so dash:/usr/local/lib/lua/5.1/
-	scp user-script dash:/usr/bin/
+	scp user-script *.lua dash:/usr/bin/
 
 .PHONY: upd
 upd: default

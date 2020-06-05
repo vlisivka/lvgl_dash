@@ -5,7 +5,7 @@
 #include "lv_drivers/indev/evdev.h"
 #include "lua.h"
 
-int init();
+int init_app();
 
 lv_indev_t * init_keyboard();
 

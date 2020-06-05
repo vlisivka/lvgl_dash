@@ -53,10 +53,10 @@ function set_logging(service, enabled)
 end
 
 function process_log_checkbox_cb(checkbox, event)
-  if event == lv.LV_EVENT_VALUE_CHANGED
+  if event == lv.EVENT_VALUE_CHANGED
   then
-    local service = lv.lv_checkbox_get_text(checkbox);
-    local checked = lv.lv_checkbox_is_checked(checkbox);
+    local service = lv.checkbox_get_text(checkbox);
+    local checked = lv.checkbox_is_checked(checkbox);
 
     --print("DEBUG: Checkbox for "..service.." is checked? "..tostring(checked));
 
@@ -69,39 +69,39 @@ end
 
 -- Initialization
 lv = require "lvgl";
-lv.init();
+lv.init_app();
 evdev_indev = lv.init_keyboard();
 
 -- Element group, for focus shift
-g = lv.lv_group_create();
+g = lv.group_create();
 
 -- Set group to be driven by keyboard
-lv.lv_indev_set_group(evdev_indev, g);
+lv.indev_set_group(evdev_indev, g);
 
 
 -- Create controls --
 
 -- Create tab view with two tabs
-tv = lv.lv_tabview_create(lv.lv_scr_act(), NULL);
-lv.lv_group_add_obj(g, tv);
+tv = lv.tabview_create(lv.scr_act(), NULL);
+lv.group_add_obj(g, tv);
 
-tab_logs = lv.lv_tabview_add_tab(tv, "Logs");
-lv.lv_page_set_scrl_layout(tab_logs, lv.to_lv_layout_t(lv.LV_LAYOUT_COLUMN_LEFT)); -- Column aligned to left
+tab_logs = lv.tabview_add_tab(tv, "Logs");
+lv.page_set_scrl_layout(tab_logs, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_LEFT)); -- Column aligned to left
 
-tab_procs = lv.lv_tabview_add_tab(tv, "Proces");
-lv.lv_page_set_scrl_layout(tab_procs, lv.to_lv_layout_t(lv.LV_LAYOUT_COLUMN_MID)); -- Centered column
+tab_procs = lv.tabview_add_tab(tv, "Proces");
+lv.page_set_scrl_layout(tab_procs, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_MID)); -- Centered column
 
 function create_checkbox(parent, group, label, checked, callback)
   -- Add Test button to "Tests" tab
-  local cbx = lv.lv_checkbox_create(parent, NULL);
-  lv.lv_group_add_obj(group, cbx);
+  local cbx = lv.checkbox_create(parent, NULL);
+  lv.group_add_obj(group, cbx);
 
   -- Bind callback to button
-  lv.lv_obj_set_lua_event_cb(cbx, callback);
+  lv.obj_set_lua_event_cb(cbx, callback);
 
-  lv.lv_checkbox_set_text(cbx, label);
+  lv.checkbox_set_text(cbx, label);
   
-  lv.lv_checkbox_set_checked(cbx, checked);
+  lv.checkbox_set_checked(cbx, checked);
 
   return cbx;
 end
@@ -112,7 +112,7 @@ for i,p in ipairs(processes) do
 end
 
 -- Set first checkbox active by default
-lv.lv_group_focus_obj(checkboxes[1]);
+lv.group_focus_obj(checkboxes[1]);
 
 print "Entering event loop. Press ^C to stop program.";
 lv.event_loop();

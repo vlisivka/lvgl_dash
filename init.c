@@ -34,7 +34,7 @@ lua_State* get_lua_state() {
 }
 
 
-int init()
+int init_app()
 {
 
     /*LittlevGL init*/

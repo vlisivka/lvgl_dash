@@ -1,5 +1,22 @@
 %module lvgl
 
+// Strip common prefix "lv_" and "LV_" from names
+%rename("%(strip:[lv_])s", regexmatch$name="^lv_") "";
+%rename("%(strip:[LV_])s", regexmatch$name="^LV_") "";
+
+// Ignore all methods or constants starting with '_'
+%rename("$ignore", regexmatch$name="^_") "";
+
+// Cannot compile
+%ignore lv_vsnprintf;
+
+// For STM32 only
+%ignore lv_gpu_stm32_dma2d_fill;
+%ignore lv_gpu_stm32_dma2d_fill_mask;
+%ignore lv_gpu_stm32_dma2d_copy;
+%ignore lv_gpu_stm32_dma2d_blend;
+
+
 %{
 #include "lv_conf.h"
 #include "./lvgl/lvgl.h"
@@ -93,13 +110,6 @@
 #include "init.h"
 %}
 
-%ignore _lv_mem_buf;
-%ignore _lv_mem_buf_get;
-%ignore lv_vsnprintf;
-%ignore lv_gpu_stm32_dma2d_fill;
-%ignore lv_gpu_stm32_dma2d_fill_mask;
-%ignore lv_gpu_stm32_dma2d_copy;
-%ignore lv_gpu_stm32_dma2d_blend;
 
 
 %include "lv_conf.h"
@@ -204,7 +214,7 @@
  * @param obj pointer to an object
  * @param event_cb the new event function
  */
-void lv_obj_set_lua_event_cb(lua_State *L, lv_obj_t *obj, SWIGLUA_REF ref) {
+void obj_set_lua_event_cb(lua_State *L, lv_obj_t *obj, SWIGLUA_REF ref) {
     if(!obj) {
         fprintf(stderr, "\nERROR: Obj is null.\n");
         return;
@@ -213,7 +223,7 @@ void lv_obj_set_lua_event_cb(lua_State *L, lv_obj_t *obj, SWIGLUA_REF ref) {
 }
 
 
-void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
+void lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
     if (obj->lua_event_cb >= 0)  {
         lua_State *L = get_lua_state();
         if (!L) return;
@@ -231,6 +241,7 @@ void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
 }
 
 /** Casting function for use with Lua bindings.*/
+lv_layout_t to_lv_layout_t(int value);
 lv_layout_t to_lv_layout_t(int value) {
   return (lv_layout_t)value;
 }

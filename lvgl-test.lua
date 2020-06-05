@@ -15,10 +15,10 @@ tv = lv.tabview_create(lv.scr_act(), NULL);
 lv.group_add_obj(g, tv);
 
 tab_tests = lv.tabview_add_tab(tv, "Tests");
-lv.page_set_scrl_layout(tab_tests, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_MID));
+lv.page_set_scrl_layout(tab_tests, lv.LAYOUT_COLUMN_MID);
 
 tab_logs = lv.tabview_add_tab(tv, "Logs");
-lv.page_set_scrl_layout(tab_logs, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_MID));
+lv.page_set_scrl_layout(tab_logs, lv.LAYOUT_COLUMN_MID);
 
 -- Add Test button to "Tests" tab
 btn = lv.btn_create(tab_tests, NULL);
@@ -45,4 +45,3 @@ lv.obj_set_lua_event_cb(btn, todo_btn_cb);
 
 print "Entering event loop. Press ^C to stop program.";
 lv.event_loop();
-

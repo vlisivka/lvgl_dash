@@ -16,6 +16,15 @@
 %ignore lv_gpu_stm32_dma2d_copy;
 %ignore lv_gpu_stm32_dma2d_blend;
 
+// According to SWIG documenation, SWIG should be able to deduct this by itself,
+// but it doesn't work because stdint.h file is not included.
+%typemap(in) uint8_t = int;
+%typemap(in) int8_t = int;
+%typemap(in) uint16_t = int;
+%typemap(in) int16_t = int;
+%typemap(in) uint32_t = int;
+%typemap(in) int32_t = int;
+
 
 %{
 #include "lv_conf.h"
@@ -111,7 +120,7 @@
 %}
 
 
-
+#include <stdint.h>
 %include "lv_conf.h"
 %include "lvgl/lvgl.h"
 
@@ -238,12 +247,6 @@ void lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
             lua_pop(L, -1);
         }
     }
-}
-
-/** Casting function for use with Lua bindings.*/
-lv_layout_t to_lv_layout_t(int value);
-lv_layout_t to_lv_layout_t(int value) {
-  return (lv_layout_t)value;
 }
 
 }

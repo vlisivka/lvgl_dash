@@ -52,18 +52,6 @@ function set_logging(service, enabled)
   output:close();
 end
 
-function process_log_checkbox_cb(checkbox, event)
-  if event == lv.EVENT_VALUE_CHANGED
-  then
-    local service = lv.checkbox_get_text(checkbox);
-    local checked = lv.checkbox_is_checked(checkbox);
-
-    --print("DEBUG: Checkbox for "..service.." is checked? "..tostring(checked));
-
-    set_logging(service, checked);
-  end
-end
-
 
 -- GUI --
 
@@ -85,11 +73,11 @@ lv.indev_set_group(evdev_indev, g);
 tv = lv.tabview_create(lv.scr_act(), NULL);
 lv.group_add_obj(g, tv);
 
-tab_logs = lv.tabview_add_tab(tv, "Logs");
-lv.page_set_scrl_layout(tab_logs, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_LEFT)); -- Column aligned to left
+tab_log = lv.tabview_add_tab(tv, "Log");
+lv.page_set_scrl_layout(tab_log, lv.LAYOUT_COLUMN_LEFT); -- Column aligned to left
 
 tab_procs = lv.tabview_add_tab(tv, "Proces");
-lv.page_set_scrl_layout(tab_procs, lv.to_lv_layout_t(lv.LAYOUT_COLUMN_MID)); -- Centered column
+lv.page_set_scrl_layout(tab_procs, lv.LAYOUT_COLUMN_MID); -- Centered column
 
 function create_checkbox(parent, group, label, checked, callback)
   -- Add Test button to "Tests" tab
@@ -106,13 +94,31 @@ function create_checkbox(parent, group, label, checked, callback)
   return cbx;
 end
 
+function log_checkbox_cb(checkbox, event)
+  if event == lv.EVENT_FOCUSED 
+  then
+    lv.page_focus(tab_log, checkbox, lv.ANIM_ON);
+  elseif event == lv.EVENT_VALUE_CHANGED
+  then
+    local service = lv.checkbox_get_text(checkbox);
+    local checked = lv.checkbox_is_checked(checkbox);
+
+    --print("DEBUG: Checkbox for "..service.." is checked? "..tostring(checked));
+
+    set_logging(service, checked);
+  end
+end
+
+
+
 checkboxes = {};
 for i,p in ipairs(processes) do
-  checkboxes[i]=create_checkbox(tab_logs, g, p, is_logging_enabled(p), process_log_checkbox_cb);
+  checkboxes[i]=create_checkbox(tab_log, g, p, is_logging_enabled(p), log_checkbox_cb);
 end
 
 -- Set first checkbox active by default
 lv.group_focus_obj(checkboxes[1]);
+
 
 print "Entering event loop. Press ^C to stop program.";
 lv.event_loop();

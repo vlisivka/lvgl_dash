@@ -14,4 +14,10 @@ lua_State* get_lua_state();
 
 void event_loop(lua_State *L);
 
+static lv_style_t lv_new_style() {
+  lv_style_t style;
+  lv_style_init(&style);
+  return style;
+}
+
 #endif

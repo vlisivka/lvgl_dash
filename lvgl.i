@@ -232,7 +232,7 @@ void obj_set_lua_event_cb(lua_State *L, lv_obj_t *obj, SWIGLUA_REF ref) {
 }
 
 
-void lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
+void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
     if (obj->lua_event_cb >= 0)  {
         lua_State *L = get_lua_state();
         if (!L) return;

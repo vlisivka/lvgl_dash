@@ -25,6 +25,6 @@ int main(void)
 }
 
 
-void lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
+void lv_lua_event_cb_caller(lv_obj_t * obj, lv_event_t event) {
   /* Do nothing. */
 }

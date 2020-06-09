@@ -66,10 +66,6 @@ lvgl.so: lvgl_wrap.o init.o $(OBJS)
 	$(CC) $(LDFLAGS) $(CFLAGS)  $(OBJS) -shared -o $@
 
 .PHONY: up
-up: lvgl.so
+up: lvgl.so default
 	scp lvgl.so dash:/usr/local/lib/lua/5.1/
-	scp user-script *.lua dash:/usr/bin/
-
-.PHONY: upd
-upd: default
-	scp demo dash:/usr/bin/
+	scp demo user-script *.lua dash:/usr/bin/

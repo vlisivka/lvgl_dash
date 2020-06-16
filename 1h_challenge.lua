@@ -2,6 +2,8 @@
 CHALLENGE_TIME=60*60; -- 1h (in seconds)
 --CHALLENGE_TIME=1*60; -- 1m (for testing)
 
+ride_distance="0m";
+
 -- Dash2 project configuration
 config=require("config");
 
@@ -85,10 +87,10 @@ function nanomsg_loop()
       msg:ParseFromString(raw_message.protobuf_message);
 
       for key,update in ipairs(msg.update) do
-        if update.metric == metric_pb.Metric.kMetricRideTime
+        if update.metric == metric_pb.Metric.kMetricRideTime and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
         then
           local ride_time = update.ivalue;
-          print("DEBUG: Time (seconds): ", ride_time);
+          -- print("DEBUG: Time (seconds): ", ride_time, ", span: ", update.span, ", operation:", update.operation);
           lv.bar_set_value(progress, ride_time, lv.ANIM_OFF);
 
           if ride_time == CHALLENGE_TIME
@@ -96,16 +98,17 @@ function nanomsg_loop()
             end_ride();
           end
 
-        elseif update.metric == metric_pb.Metric.kMetricDistance
+        elseif update.metric == metric_pb.Metric.kMetricDistance and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
         then
-          local ride_distance = update.fvalue;
-          print("DEBUG: Distance (metters): ", ride_distance);
-          lv.label_set_text(distance, string.format("%dm", (ride_distance)));
+          local ride_distance_float = update.fvalue;
+          ride_distance = string.format("%dm", ride_distance_float); -- TODO: Support imperial units
+          -- print("DEBUG: Distance (metters): ", ride_distance, ", span: ", update.span, ", operation:", update.operation);
+          lv.label_set_text(distance, ride_distance);
 
-        elseif update.metric == metric_pb.Metric.kMetricSpeed
+        elseif update.metric == metric_pb.Metric.kMetricSpeed and update.span == metric_pb.Span.kSpanInstant and update.operation == metric_pb.Operation.kOperationAverage
         then
           local ride_speed = update.fvalue;
-          print("DEBUG: Speed (m/s): ", ride_speed);
+          -- print("DEBUG: Speed (m/s): ", ride_speed, ", span: ", update.span, ", operation:", update.operation);
           lv.gauge_set_value(speedometer, 0, ride_speed*3.6); -- km/h
         end
       end
@@ -136,12 +139,6 @@ function init_nanomsg()
   -- Resources (event topics, strings, etc.)
   resources = require("resources");
 
-  sub_socket = nanomsg.socket(nanomsg.AP_SP, nanomsg.SUB);
-  print('Trying to connect to "', config.NANOMSG_SUB_SOCKET_URL, '" using Sub protocol.');
-  local sub_socket_ok, _ = sub_socket:connect(config.NANOMSG_PUB_SOCKET_URL);
-  assert(sub_socket_ok, "Cannot connect to nanomsg Sub URL.");
-  print('Connected to "', config.NANOMSG_SUB_SOCKET_URL, '" using Sub protocol.');
-
   push_socket = nanomsg.socket(nanomsg.AP_SP, nanomsg.PUSH);
   print('Trying to connect to "', config.NANOMSG_PULL_SOCKET_URL, '" using Push protocol.');
   local push_socket_ok, _ = push_socket:connect(config.NANOMSG_PULL_SOCKET_URL);
@@ -153,31 +150,33 @@ function init_nanomsg()
   assert(send_event(push_socket,resources.R_event.hello, event));
 end
 
-function create_button(parent, group, label, callback)
-  -- Add Test button to "Tests" tab
-  local btn = lv.btn_create(parent, NULL);
-  lv.group_add_obj(group, btn);
+function create_msgbox(parent, group, text, buttons, cb)
+    local mbox = lv.msgbox_create(parent, NULL);
+    lv.msgbox_set_text(mbox, text);
+    lv.obj_set_lua_event_cb(mbox, cb);
+    lv.group_add_obj(group, mbox);
+    lv.group_focus_obj(mbox);
+    lv.group_set_editing(group, false);
+    lv.group_focus_freeze(group, true);
+    lv.obj_align(mbox, NULL, lv.ALIGN_CENTER, 0, 0);
 
-  -- Bind callback to button
-  lv.obj_set_lua_event_cb(btn, callback);
+-- Doesn't work, needs wrapper function to be implemented.
+--    lv.msgbox_add_btns(mbox, buttons);
 
-  local btn_label =  lv.label_create(btn, NULL);
-  lv.label_set_text(btn_label, label);
+    lv.obj_set_style_local_bg_opa(lv.layer_top(), lv.OBJ_PART_MAIN, lv.STATE_DEFAULT, lv.OPA_30);
+    lv.obj_set_style_local_bg_color(lv.layer_top(), lv.OBJ_PART_MAIN, lv.STATE_DEFAULT, lv.color_make(80,80,80));
 
-  return btn;
+    return mbox;
 end
 
-function create_checkbox(parent, group, label, callback)
-  -- Add Test button to "Tests" tab
-  local cbx = lv.checkbox_create(parent, NULL);
-  lv.group_add_obj(group, cbx);
+function welcome_msgbox_event_cb(msgbox, event)
+    if(event == lv.EVENT_CLICKED)
+    then
+        lv.obj_del(msgbox);
+        lv.event_send(lv.scr_act(), lv.EVENT_REFRESH, NULL);
 
-  -- Bind callback to button
-  lv.obj_set_lua_event_cb(cbx, callback);
-
-  lv.checkbox_set_text(cbx, label);
-
-  return cbx;
+        start_ride();
+    end
 end
 
 function start_ride()
@@ -187,13 +186,36 @@ end
 
 function end_ride()
   -- Send ride end event.
-  send_ride_action_event(event_pb.RideAction.RIDE_END);
+--  send_ride_action_event(event_pb.RideAction.RIDE_END);
+
+  -- Send "End and save" menu item selected event
+  local event = event_pb.UiSelectEvent();
+  event.screen = 196;
+  event.selected = 192;
+  event.selected_int = 519;
+  local send_ok = send_event(push_socket, resources.R_event.ui_select, event);
+  assert(send_ok);
+  print("UiSelectEvent is sent.");
+
   lv.gauge_set_value(speedometer, 0, 0);
   lv.bar_set_value(progress, 0, lv.ANIM_OFF);
+
+  create_msgbox(scr, g, "Your result:\n"..ride_distance, {"Great"}, end_msgbox_event_cb);
+
   lv.task_handler(); -- Update UI
 
-  os.exit();
 end
+
+function end_msgbox_event_cb(msgbox, event)
+    if(event == lv.EVENT_CLICKED)
+    then
+        lv.obj_del(msgbox);
+        lv.event_send(lv.scr_act(), lv.EVENT_REFRESH, NULL);
+
+        os.exit();
+    end
+end
+
 
 function init_gui()
   lv.init_app();
@@ -233,7 +255,7 @@ function init_gui()
 
   progress = lv.bar_create(scr, NULL);
   lv.obj_set_size(progress, 200, 20);
-  lv.obj_align(progress, NULL, lv.ALIGN_IN_BOTTOM_MID, 0, -30);
+  lv.obj_align(progress, NULL, lv.ALIGN_IN_BOTTOM_MID, 0, -40);
   lv.bar_set_range(progress, 1, CHALLENGE_TIME); -- 1 hour in seconds
   lv.bar_set_type(progress, lv.BAR_TYPE_SYMMETRICAL);
   lv.bar_set_value(progress, 0, lv.ANIM_OFF);
@@ -241,11 +263,14 @@ function init_gui()
   -- Create distance label
   distance = lv.label_create(scr, NULL);
   lv.label_set_recolor(distance, true);
-  lv.obj_align(distance, NULL, lv.ALIGN_IN_BOTTOM_MID, 0, -80);
+  lv.obj_align(distance, NULL, lv.ALIGN_IN_BOTTOM_MID, 0, -90);
   lv.label_set_align(distance, lv.LABEL_ALIGN_CENTER);
   lv.label_set_text(distance, "0m");
   --lv.obj_add_style(distance, lv.LABEL_PART_MAIN, label_style);
   lv.obj_set_style_local_text_font(distance, lv.LABEL_PART_MAIN, lv.STATE_DEFAULT, lv.font_montserrat_24);
+  
+  -- Create message box
+  create_msgbox(scr, g, "How far you can go in 1 Hour?", {"Start"}, welcome_msgbox_event_cb);
 
   lv.store_lua_state();
 
@@ -255,8 +280,6 @@ end
 function main()
   init_gui();
   init_nanomsg();
-
-  start_ride();
 
   print "Entering event loop. Press ^C to stop program.";
   nanomsg_loop();

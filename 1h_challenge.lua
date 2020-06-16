@@ -4,6 +4,9 @@ CHALLENGE_TIME=60*60; -- 1h (in seconds)
 
 ride_distance="0m";
 
+package.path="/etc/sblua/?.lua;/usr/share/sblua-5.2/?/init.lua;/usr/share/sblua-5.2/?.lua";
+package.cpath="/usr/lib/sblua-5.2/?.so";
+
 -- Dash2 project configuration
 config=require("config");
 
@@ -185,17 +188,12 @@ function start_ride()
 end
 
 function end_ride()
-  -- Send ride end event.
---  send_ride_action_event(event_pb.RideAction.RIDE_END);
-
   -- Send "End and save" menu item selected event
   local event = event_pb.UiSelectEvent();
-  event.screen = 196;
-  event.selected = 192;
-  event.selected_int = 519;
-  local send_ok = send_event(push_socket, resources.R_event.ui_select, event);
-  assert(send_ok);
-  print("UiSelectEvent is sent.");
+  event.screen = resources.R_screen.ride_paused;
+  event.selected = resources.R_action.save;
+  send_event(push_socket, resources.R_event.ui_select, event);
+  print("DEBUG: UiSelectEvent is sent.");
 
   lv.gauge_set_value(speedometer, 0, 0);
   lv.bar_set_value(progress, 0, lv.ANIM_OFF);

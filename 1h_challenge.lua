@@ -9,20 +9,7 @@ package.cpath="/usr/lib/sblua-5.2/?.so";
 
 -- Dash2 project configuration
 config=require("config");
-
--- LVGL
-lv = require "lvgl";
-
-
--- Add header and send given event using socket.
-function send_event(socket, topic, event)
-  local data = event:SerializeToString();
-  local len = string.len(data);
-  
-  -- Add header and send message using nanomsg
-  local msg = string.char(topic, len % 256, len / 256) .. event:SerializeToString();
-  return socket:send(msg);
-end
+dash=require("dash");
 
 function send_keyboard_event(button, action)
   local event = event_pb.KeyboardEvent();
@@ -43,115 +30,28 @@ function send_ride_action_event(action)
   print("Ride action event is sent. Action: "..action..".");
 end
 
--- Receive message from socket, parse header and return raw Protobuf message.
-function receive_raw_message(socket)
-  local msg = socket:recv_nb(8000);
-  if not msg then
-    -- Message not received (timeout, interrupt, an error)
-    return 0
-  end
-
-  local raw_message = {};
-  -- Header
-  raw_message.topic = string.byte(msg, 1);
-  raw_message.len =  string.byte(msg, 3)*256 + string.byte(msg, 2);
-  raw_message.protobuf_message = string.sub(msg, 4);
-
-  assert(raw_message.len==string.len(raw_message.protobuf_message), "Unexpected length of message: declared length is not equal to actual length of Protobuf message.");
-  return raw_message;
+function start_ride()
+  -- Send ride start event.
+  send_ride_action_event(event_pb.RideAction.RIDE_START);
 end
 
--- Continuously receive messages from GEH using Pub-Sub protocol and print them out.
--- Subscribe to some messages only.
-function nanomsg_loop()
-  lv.task_handler();
-  local sub_socket = nanomsg.socket(nanomsg.AP_SP, nanomsg.SUB);
-  -- Subsscribe to event
-  assert(sub_socket:setopt(nanomsg.SUB, nanomsg.SUB_SUBSCRIBE, string.char(resources.R_event.ui_data)));
-  
-  
-  local sub_socket_ok, _ = sub_socket:connect(config.NANOMSG_PUB_SOCKET_URL);
-  assert(sub_socket_ok, "Cannot connect to nanomsg Sub URL.");
-  print('Connected to "'..config.NANOMSG_PUB_SOCKET_URL..'" using Sub protocol. Listening for message broadcasts.');
+function end_ride()
+  -- Send "End and save" menu item selected event
+  local event = event_pb.UiSelectEvent();
+  event.screen = resources.R_screen.ride_paused;
+  event.selected = resources.R_action.save;
+  send_event(push_socket, resources.R_event.ui_select, event);
+  print("DEBUG: UiSelectEvent is sent.");
 
-  while (true) do
-    local raw_message = NULL;
-    repeat
-      -- Update UI
-      lv.task_handler();
+  lv.gauge_set_value(speedometer, 0, 0);
+  lv.bar_set_value(progress, 0, lv.ANIM_OFF);
 
-      -- Try to receive message
-      raw_message = receive_raw_message(sub_socket);
-    until raw_message ~= 0;
+  create_msgbox(scr, g, "Your result:\n"..ride_distance, {"Great"}, end_msgbox_event_cb);
 
-    if raw_message.topic == resources.R_event.ui_data then
-      -- Decode message
-      local msg = event_pb.UiDataEvent();
-      msg:ParseFromString(raw_message.protobuf_message);
-
-      for key,update in ipairs(msg.update) do
-        if update.metric == metric_pb.Metric.kMetricRideTime and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
-        then
-          local ride_time = update.ivalue;
-          -- print("DEBUG: Time (seconds): ", ride_time, ", span: ", update.span, ", operation:", update.operation);
-          lv.bar_set_value(progress, ride_time, lv.ANIM_OFF);
-
-          if ride_time == CHALLENGE_TIME
-          then
-            end_ride();
-          end
-
-        elseif update.metric == metric_pb.Metric.kMetricDistance and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
-        then
-          local ride_distance_float = update.fvalue;
-          ride_distance = string.format("%dm", ride_distance_float); -- TODO: Support imperial units
-          -- print("DEBUG: Distance (metters): ", ride_distance, ", span: ", update.span, ", operation:", update.operation);
-          lv.label_set_text(distance, ride_distance);
-
-        elseif update.metric == metric_pb.Metric.kMetricSpeed and update.span == metric_pb.Span.kSpanInstant and update.operation == metric_pb.Operation.kOperationAverage
-        then
-          local ride_speed = update.fvalue;
-          -- print("DEBUG: Speed (m/s): ", ride_speed, ", span: ", update.span, ", operation:", update.operation);
-          lv.gauge_set_value(speedometer, 0, ride_speed*3.6); -- km/h
-        end
-      end
-
-    else
-      print("ERROR: Unknown topic of message: ", topic);
-    end
-    lv.task_handler();
-  end
+  lv.task_handler(); -- Update UI
 end
 
 
-function init_nanomsg()
-  -- nanomsg
-  nanomsg = require("nanomsg");
-
-  -- Protobuf stubs
-  workout_pb = require("workout_pb"); -- for event_pb.lua
-  metric_pb = require("metric_pb"); -- for event_pb.lua
-  ant_pb = require("ant_pb"); -- for event_pb.lua
-  ble_pb = require("ble_pb"); -- for event_pb.lua
-  model_pb = require("model_pb"); -- for event_pb.lua
-  icons_pb = require("icons_pb"); -- for event_pb.lua
-  strings_pb = require("strings_pb"); -- for event_pb.lua
-  event_pb = require("event_pb");
-  system_pb = require("system_pb");
-
-  -- Resources (event topics, strings, etc.)
-  resources = require("resources");
-
-  push_socket = nanomsg.socket(nanomsg.AP_SP, nanomsg.PUSH);
-  print('Trying to connect to "', config.NANOMSG_PULL_SOCKET_URL, '" using Push protocol.');
-  local push_socket_ok, _ = push_socket:connect(config.NANOMSG_PULL_SOCKET_URL);
-  assert(push_socket_ok, "Cannot connect to nanomsg Push URL.");
-  print('Connected to "', config.NANOMSG_PULL_SOCKET_URL, '" using Push protocol.');
-  
-  local event = event_pb.Hello();
-  event.service_name = "1h_challenge";
-  assert(send_event(push_socket,resources.R_event.hello, event));
-end
 
 function create_msgbox(parent, group, text, buttons, cb)
     local mbox = lv.msgbox_create(parent, NULL);
@@ -180,28 +80,6 @@ function welcome_msgbox_event_cb(msgbox, event)
 
         start_ride();
     end
-end
-
-function start_ride()
-  -- Send ride start event.
-  send_ride_action_event(event_pb.RideAction.RIDE_START);
-end
-
-function end_ride()
-  -- Send "End and save" menu item selected event
-  local event = event_pb.UiSelectEvent();
-  event.screen = resources.R_screen.ride_paused;
-  event.selected = resources.R_action.save;
-  send_event(push_socket, resources.R_event.ui_select, event);
-  print("DEBUG: UiSelectEvent is sent.");
-
-  lv.gauge_set_value(speedometer, 0, 0);
-  lv.bar_set_value(progress, 0, lv.ANIM_OFF);
-
-  create_msgbox(scr, g, "Your result:\n"..ride_distance, {"Great"}, end_msgbox_event_cb);
-
-  lv.task_handler(); -- Update UI
-
 end
 
 function end_msgbox_event_cb(msgbox, event)
@@ -275,12 +153,55 @@ function init_gui()
   lv.task_handler(); -- Update UI
 end
 
+function ui_data_event_handler(topic, protobuf_message)
+  -- Decode message
+  local msg = event_pb.UiDataEvent();
+  msg:ParseFromString(protobuf_message);
+
+  for key,update in ipairs(msg.update) do
+
+    if update.metric == metric_pb.Metric.kMetricRideTime and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
+    then
+      local ride_time = update.ivalue;
+      -- print("DEBUG: Time (seconds): ", ride_time, ", span: ", update.span, ", operation:", update.operation);
+      lv.bar_set_value(progress, ride_time, lv.ANIM_OFF);
+
+      if ride_time >= CHALLENGE_TIME
+      then
+        end_ride();
+      end
+
+    elseif update.metric == metric_pb.Metric.kMetricDistance and update.span == metric_pb.Span.kSpanRide and update.operation == metric_pb.Operation.kOperationTotal
+    then
+      local ride_distance_float = update.fvalue;
+      ride_distance = string.format("%dm", ride_distance_float); -- TODO: Support imperial units
+      -- print("DEBUG: Distance (metters): ", ride_distance, ", span: ", update.span, ", operation:", update.operation);
+      lv.label_set_text(distance, ride_distance);
+
+    elseif update.metric == metric_pb.Metric.kMetricSpeed and update.span == metric_pb.Span.kSpanInstant and update.operation == metric_pb.Operation.kOperationAverage
+    then
+      local ride_speed = update.fvalue;
+      -- print("DEBUG: Speed (m/s): ", ride_speed, ", span: ", update.span, ", operation:", update.operation);
+      lv.gauge_set_value(speedometer, 0, ride_speed*3.6); -- km/h
+    end
+  end
+end
+
+
 function main()
   init_gui();
-  init_nanomsg();
+  init_protobuf();
+
+  push_socket = init_nanomsg();
+  send_hello_event(push_socket);
+
+  local event_handlers = {
+    [resources.R_event.keyboard] = keyboard_event_handler,
+    [resources.R_event.ui_data] = ui_data_event_handler,
+  };
 
   print "Entering event loop. Press ^C to stop program.";
-  nanomsg_loop();
+  nanomsg_loop(event_handlers);
 end
 
 main();

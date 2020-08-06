@@ -2,6 +2,7 @@
 #include "lv_drivers/display/fbdev.h"
 #include "lv_examples/lv_examples.h"
 #include "init.h"
+#include "virt_keyboard.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
@@ -63,17 +64,16 @@ int init_app()
     return 0;
 }
 
-static lv_indev_drv_t evdev_drv;
+static lv_indev_drv_t virt_keyboard_drv;
 lv_indev_t * init_keyboard() {
-    evdev_init();
-    lv_indev_drv_init(&evdev_drv);
-    evdev_drv.type = LV_INDEV_TYPE_KEYPAD_ENCODER;
-    evdev_drv.read_cb = evdev_read;
-    lv_indev_t * evdev_indev = lv_indev_drv_register(&evdev_drv);
+    virt_keyboard_init();
+    lv_indev_drv_init(&virt_keyboard_drv);
+    virt_keyboard_drv.type = LV_INDEV_TYPE_KEYPAD_ENCODER;
+    virt_keyboard_drv.read_cb = virt_keyboard_read;
+    lv_indev_t * virt_keyboard_indev = lv_indev_drv_register(&virt_keyboard_drv);
     
-    return evdev_indev;
+    return virt_keyboard_indev;
 }
-/*    lv_indev_set_group(evdev_indev, group); */
 
 /*Set in lv_conf.h as `LV_TICK_CUSTOM_SYS_TIME_EXPR`*/
 uint32_t custom_tick_get(void)

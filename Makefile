@@ -37,8 +37,8 @@ COBJS = $(CSRCS:.c=$(OBJEXT))
 
 MAINOBJ = $(MAINSRC:.c=$(OBJEXT))
 
-SRCS = $(ASRCS) $(CSRCS) $(MAINSRC) lv_demo_keypad_encoder.c init.c lvgl_wrap.c
-OBJS = $(AOBJS) $(COBJS) init.o lvgl_wrap.o
+SRCS = $(ASRCS) $(CSRCS) $(MAINSRC) lv_demo_keypad_encoder.c init.c lvgl_wrap.c virt_keyboard.c
+OBJS = $(AOBJS) $(COBJS) init.o lvgl_wrap.o virt_keyboard.o
 
 ## MAINOBJ -> OBJFILES
 
@@ -53,7 +53,7 @@ demo: default
 
 .PHONY: default
 default: $(OBJS) $(MAINOBJ)
-	$(CC) -o $(BIN) $(MAINOBJ) $(AOBJS) $(COBJS) init.o $(LDFLAGS) $(CFLAGS)
+	$(CC) -o $(BIN) $(MAINOBJ) $(AOBJS) $(COBJS) init.o virt_keyboard.o $(LDFLAGS) $(CFLAGS)
 
 .PHONY: clean
 clean: 
@@ -62,10 +62,11 @@ clean:
 lvgl_wrap.c: lvgl.i init.h
 	swig -lua lvgl.i
 
-lvgl.so: lvgl_wrap.o init.o $(OBJS)
+lvgl.so: $(OBJS)
 	$(CC) $(LDFLAGS) $(CFLAGS)  $(OBJS) -shared -o $@
 
 .PHONY: up
 up: lvgl.so default
-	scp lvgl.so dash:/usr/lib/sblua-5.2/
+	scp lvgl.so nanomsg/nanomsg.so dash:/usr/lib/sblua-5.2/
+	scp dash.lua dash:/usr/share/sblua-5.2/
 	scp demo user-script *.lua dash:/usr/bin/

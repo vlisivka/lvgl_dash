@@ -117,6 +117,7 @@
 #include "./lvgl/src/lv_misc/lv_math.h"
 #include "./lvgl/src/lv_misc/lv_gc.h"
 #include "init.h"
+#include "virt_keyboard.h"
 %}
 
 
@@ -211,6 +212,7 @@
 %include "./lvgl/src/lv_misc/lv_math.h"
 %include "./lvgl/src/lv_misc/lv_gc.h"
 %include "init.h"
+%include "virt_keyboard.h"
 
 %include <lua_fnptr.i>
 

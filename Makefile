@@ -7,6 +7,7 @@
 # Dash SCEL SDK ,for crosscompilation. Other ARM crosscompilers may work too, not tested.
 # CrankSoftware StoryBoard-5.2, for sblua-5.1 headers and libraries. Stock Lua 5.1 may work too, not tested.
 # SWIG, for binding generation.
+# For screen recording, ffmpeg must be installed on Dash.
 
 # Adjust these options according to your situation:
 # Crosscompiler to use
@@ -80,7 +81,7 @@ lvgl.so: $(OBJS)
 up: lvgl.so default
 	scp lvgl.so nanomsg/nanomsg.so dash:/usr/lib/sblua-5.2/
 	scp dash.lua dash:/usr/share/sblua-5.2/
-	scp demo user-script *.lua dash:/usr/bin/
-	scp launcher.conf dash:/etc/event-server.d/
+	scp demo user-script *.lua ffmpeg-recorder-wrapper.sh dash:/usr/bin/
+	scp launcher.conf ffmpeg-recorder.conf dash:/etc/event-server.d/
 	ssh dash mkdir -p /usr/share/applications/
 	scp *.desktop dash:/usr/share/applications/

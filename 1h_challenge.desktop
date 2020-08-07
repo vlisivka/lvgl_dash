@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=1h_challenge
+GenericName=1h challenge
+Type=Application
+Categories=Games;
+Icon=1hc
+Exec=1h_challenge.lua
+Terminal=false
+StartupNotify=true

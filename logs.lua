@@ -1,4 +1,11 @@
 #!/usr/bin/sblua
+package.path="/etc/sblua/?.lua;/usr/share/sblua-5.2/?/init.lua;/usr/share/sblua-5.2/?.lua";
+package.cpath="/usr/lib/sblua-5.2/?.so";
+
+-- Dash2 project configuration
+config=require("config");
+dash=require("dash");
+
 processes = { "ui", "event-server", "rfcom", "analytics", "behavior_tree", "map", "workout", "fitlog", "usbmgr" };
 
 function is_logging_enabled(service)
@@ -54,31 +61,6 @@ end
 
 
 -- GUI --
-
--- Initialization
-lv = require "lvgl";
-lv.init_app();
-evdev_indev = lv.init_keyboard();
-
--- Element group, for focus shift
-g = lv.group_create();
-
--- Set group to be driven by keyboard
-lv.indev_set_group(evdev_indev, g);
-
-
--- Create controls --
-
--- Create tab view with two tabs
-tv = lv.tabview_create(lv.scr_act(), NULL);
-lv.group_add_obj(g, tv);
-
-tab_log = lv.tabview_add_tab(tv, "Log");
-lv.page_set_scrl_layout(tab_log, lv.LAYOUT_COLUMN_LEFT); -- Column aligned to left
-
-tab_procs = lv.tabview_add_tab(tv, "Proces");
-lv.page_set_scrl_layout(tab_procs, lv.LAYOUT_COLUMN_MID); -- Centered column
-
 function create_checkbox(parent, group, label, checked, callback)
   -- Add Test button to "Tests" tab
   local cbx = lv.checkbox_create(parent, NULL);
@@ -97,7 +79,14 @@ end
 function log_checkbox_cb(checkbox, event)
   if event == lv.EVENT_FOCUSED 
   then
-    lv.page_focus(tab_log, checkbox, lv.ANIM_ON);
+    -- TODO: FIXME: This line casuses crash in page_focus(). :-/
+    --local parent = lv.obj_get_parent(checkbox); 
+    local parent = tab_log;
+    if parent
+    then
+      lv.page_focus(parent, checkbox, lv.ANIM_ON);
+    end
+
   elseif event == lv.EVENT_VALUE_CHANGED
   then
     local service = lv.checkbox_get_text(checkbox);
@@ -109,16 +98,54 @@ function log_checkbox_cb(checkbox, event)
   end
 end
 
+function init_gui()
+  -- Initialization
+  lv = require "lvgl";
+  lv.init_app();
+  evdev_indev = lv.init_keyboard();
+
+  -- Element group, for focus shift
+  g = lv.group_create();
+
+  -- Set group to be driven by keyboard
+  lv.indev_set_group(evdev_indev, g);
 
 
-checkboxes = {};
-for i,p in ipairs(processes) do
-  checkboxes[i]=create_checkbox(tab_log, g, p, is_logging_enabled(p), log_checkbox_cb);
+  -- Create controls --
+
+  -- Create tab view with one tab (because it looks good and can be extended later).
+  tv = lv.tabview_create(lv.scr_act(), NULL);
+  lv.group_add_obj(g, tv);
+
+  tab_log = lv.tabview_add_tab(tv, "Enable logs");
+  lv.page_set_scrl_layout(tab_log, lv.LAYOUT_COLUMN_LEFT); -- Column aligned to left
+
+  checkboxes = {};
+  for i,p in ipairs(processes) do
+    checkboxes[i]=create_checkbox(tab_log, g, p, is_logging_enabled(p), log_checkbox_cb);
+  end
+
+  -- Set first checkbox active by default
+  lv.group_focus_obj(checkboxes[1]);
+
+  -- Update UI once
+  lv.store_lua_state();
+  lv.task_handler(); 
 end
 
--- Set first checkbox active by default
-lv.group_focus_obj(checkboxes[1]);
+function main()
+  init_gui();
+  init_protobuf();
 
+  push_socket = init_nanomsg();
+  send_hello_event(push_socket);
 
-print "Entering event loop. Press ^C to stop program.";
-lv.event_loop();
+  local event_handlers = {
+    [resources.R_event.keyboard] = keyboard_event_handler
+  };
+
+  print "Entering event loop. Press ^C to stop program.";
+  nanomsg_loop(event_handlers);
+end
+
+main();

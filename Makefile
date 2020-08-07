@@ -1,10 +1,21 @@
 #
 # Makefile
 #
-#CC ?= gcc
+
+# Requirements:
+# Dash M50 device, for running the code. Dash L50 will work too, but image will be flipped.
+# Dash SCEL SDK ,for crosscompilation. Other ARM crosscompilers may work too, not tested.
+# CrankSoftware StoryBoard-5.2, for sblua-5.1 headers and libraries. Stock Lua 5.1 may work too, not tested.
+# SWIG, for binding generation.
+
+# Adjust these options according to your situation:
+# Crosscompiler to use
 CC = /opt/scel/18.10/sysroots/x86_64-scelsdk-linux/usr/bin/arm-scel-linux-gnueabi/arm-scel-linux-gnueabi-gcc
+# Crosscompiler flags
 ARM_CFLAGS = --sysroot=/opt/scel/18.10/sysroots/armv7ahf-neon-scel-linux-gnueabi -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard -marm
+# Path to sblua (StoryBoard-5.2 Lua-5.1) libraries
 CRANKSOFTWARE_PREFIX ?= ${HOME}/workspace/dash2-clean/shim/deps/Crank_Software/Storyboard_Engine/5.2.201802081110/linux-imx6yocto-armle-swrender-obj
+
 LVGL_DIR_NAME ?= lvgl
 LVGL_DIR ?= ${shell pwd}
 CFLAGS ?= -I$(LVGL_DIR)/ -Wall -Wshadow -Wundef -Wmaybe-uninitialized -Wmissing-prototypes -Wno-discarded-qualifiers -Wall -Wextra -Wno-unused-function -Wundef -Wno-error=strict-prototypes -Wpointer-arith -fno-strict-aliasing -Wno-error=cpp -Wuninitialized -Wmaybe-uninitialized -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wno-cast-qual -Wunreachable-code -Wno-switch-default -Wno-switch-enum -Wreturn-type -Wmultichar -Wformat-security -Wno-ignored-qualifiers -Wno-error=pedantic -Wno-sign-compare -Wno-error=missing-prototypes -Wdouble-promotion -Wclobbered -Wdeprecated -Wempty-body -Wtype-limits -Wshift-negative-value -Wstack-usage=1024 -Wno-unused-value -Wno-unused-parameter -Wno-missing-field-initializers -Wuninitialized -Wmaybe-uninitialized -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wtype-limits -Wsizeof-pointer-memaccess -Wno-format-nonliteral -Wpointer-arith -Wno-cast-qual -Wmissing-prototypes -Wunreachable-code -Wno-switch-default -Wswitch-enum -Wreturn-type -Wmultichar -Wno-discarded-qualifiers -Wformat-security -Wno-ignored-qualifiers -Wno-sign-compare \
@@ -70,3 +81,6 @@ up: lvgl.so default
 	scp lvgl.so nanomsg/nanomsg.so dash:/usr/lib/sblua-5.2/
 	scp dash.lua dash:/usr/share/sblua-5.2/
 	scp demo user-script *.lua dash:/usr/bin/
+	scp launcher.conf dash:/etc/event-server.d/
+	ssh dash mkdir -p /usr/share/applications/
+	scp *.desktop dash:/usr/share/applications/

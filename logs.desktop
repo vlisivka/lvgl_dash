@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=logs
+GenericName=Logs
+Type=Application
+Categories=Utilities;
+Icon=log
+Exec=logs.lua
+Terminal=false
+StartupNotify=true

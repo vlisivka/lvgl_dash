@@ -114,7 +114,7 @@ function keyboard_event_handler(topic, protobuf_message)
   -- Decode message
   local event = event_pb.KeyboardEvent();
   event:ParseFromString(protobuf_message);
-  print("DEBUG: event.button:", event.button, "event.action:", event.action, "event.pid:", event.pid);
+  --print("DEBUG: event.button:", event.button, "event.action:", event.action, "event.pid:", event.pid);
 
   if event.pid == pid then
     local key = dash_to_lvgl_button_map[event.button];
@@ -159,7 +159,7 @@ function nanomsg_loop(handlers)
     until raw_message ~= 0;
 
     local handler=handlers[raw_message.topic];
-    print("DEBUG: Topic:", raw_message.topic, "handler: ", handler);
+    --print("DEBUG: Topic:", raw_message.topic, "handler: ", handler);
  
     if handler ~= nil then
       handler(topic, raw_message.protobuf_message);
@@ -188,11 +188,11 @@ function get_pid_of_self()
 end
 
 -- If focus changed via keyboard, then show focused object.
--- Function assumes that parent object is able to do that.
+-- Function blindly assumes that parent page is able to do that.
 function focus_cb(obj, event)
   if event == lv.EVENT_FOCUSED 
   then
-    lv.page_focus(lv.obj_get_parent(parent), obj, lv.ANIM_ON);
+    lv.page_focus(lv.obj_get_parent(obj), obj, lv.ANIM_ON);
   end
 end
                                                              
